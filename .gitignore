@@ -1,0 +1,24 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Generated datasets and training artifacts can become large.
+datasets/raw_sheets/*
+datasets/cropped_214/*
+datasets/glyphs_214/*
+datasets/masks_layer_214/*
+datasets/clova_214/*
+datasets/train_*/
+runs/*
+
+!datasets/raw_sheets/.gitkeep
+!datasets/cropped_214/.gitkeep
+!datasets/glyphs_214/.gitkeep
+!datasets/masks_layer_214/.gitkeep
+!datasets/clova_214/.gitkeep
+!runs/.gitkeep
+
+outputs/
+checkpoints/
+*.pt
+*.pth

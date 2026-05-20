@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hangul Layer Mask Editor</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <aside>
+      <div class="top">
+        <strong id="title">Layer editor</strong>
+        <span id="progress">0/0</span>
+      </div>
+      <div id="fontPanel" class="font-panel hidden">
+        <select id="fontSelect"></select>
+        <div class="font-actions">
+          <button id="markComplete">Complete</button>
+          <button id="skipFont">Skip</button>
+          <button id="deleteFont">Delete</button>
+        </div>
+        <p id="fontMeta"></p>
+      </div>
+      <div id="files"></div>
+    </aside>
+    <main>
+      <header>
+        <div>
+          <strong id="glyphName">-</strong>
+          <span id="glyphChar">-</span>
+        </div>
+        <div class="controls">
+          <button id="prev">Prev</button>
+          <button id="next">Next</button>
+          <button id="loadDraft">Load draft</button>
+          <button id="save">Save</button>
+        </div>
+      </header>
+      <section class="toolbar">
+        <button data-layer="L">L</button>
+        <button data-layer="V">V</button>
+        <button data-layer="T">T</button>
+        <button data-layer="ignore">Ignore</button>
+        <button id="brushMode">Brush</button>
+        <button id="fillMode">Fill</button>
+        <button id="erase">Erase</button>
+        <label>Brush <input id="brush" type="range" min="1" max="48" value="12" /> <output id="brushValue">12 px</output></label>
+        <label><input id="strokeOnly" type="checkbox" checked /> Stroke only</label>
+        <label><input id="fillRespectLayers" type="checkbox" checked /> Fill stops at other layers</label>
+        <p id="message"></p>
+      </section>
+      <section id="viewport" class="viewport">
+        <div id="stage" class="canvases">
+          <div class="canvas-panel"><span>Glyph</span><canvas id="glyph"></canvas></div>
+          <div class="canvas-panel"><span>Composite</span><canvas id="overlay"></canvas></div>
+          <div class="canvas-panel"><span>Active Layer</span><canvas id="edit"></canvas></div>
+          <div id="layerPreviews" class="layer-previews">
+            <div class="layer-preview" data-preview-layer="L">
+              <span>L</span>
+              <canvas id="previewL"></canvas>
+            </div>
+            <div class="layer-preview" data-preview-layer="V">
+              <span>V</span>
+              <canvas id="previewV"></canvas>
+            </div>
+            <div class="layer-preview" data-preview-layer="T">
+              <span>T</span>
+              <canvas id="previewT"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div id="brushCursor"></div>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
