@@ -111,11 +111,19 @@
   "completed": [
     "002_font",
     "001_font",
-    "003_font"
+    "003_font",
+    "004_font",
+    "008_font",
+    "009_font",
+    "006_font",
+    "010_font",
+    "011_font"
   ],
   "skipped": [
     "027_font",
-    "100_font"
+    "100_font",
+    "005_font",
+    "007_font"
   ],
   "current": "001_font",
   "deleted": []

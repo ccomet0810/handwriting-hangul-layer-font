@@ -550,9 +550,17 @@ async function saveAndGo(delta) {
 }
 async function init() {
   await loadFonts();
+  bindControls();
   const data = await (await fetch(apiUrl("/api/list"))).json();
   state.files = data.files;
-  if (!state.files.length) { msg("No glyphs found"); return; }
+  if (!state.files.length) {
+    renderList();
+    msg("No glyphs found for selected font.");
+    return;
+  }
+  await go(0);
+}
+function bindControls() {
   document.querySelectorAll("[data-layer]").forEach((b) => b.onclick = () => { state.layer = b.dataset.layer; render(); });
   document.getElementById("brushMode").onclick = () => { state.mode = "brush"; renderControls(); };
   document.getElementById("fillMode").onclick = () => { state.mode = "fill"; renderControls(); };
@@ -735,7 +743,6 @@ async function init() {
     }
     render();
   });
-  await go(0);
 }
 async function loadFonts() {
   const data = await (await fetch("/api/fonts")).json();
@@ -743,9 +750,11 @@ async function loadFonts() {
   state.fonts = data.fonts || [];
   if (!state.managedFonts || !state.fonts.length) return;
   const saved = localStorage.getItem("layerEditor.fontId");
-  const preferred = state.fonts.find((font) => font.fontId === saved && font.status !== "deleted");
+  const usableFont = (font) => font.status !== "deleted" && font.glyphCount > 0;
+  const preferred = state.fonts.find((font) => font.fontId === saved && usableFont(font));
   const first = state.fonts.find((font) => font.status !== "deleted" && font.glyphCount > 0) || state.fonts[0];
   state.fontId = (preferred || first).fontId;
+  localStorage.setItem("layerEditor.fontId", state.fontId);
   renderFonts();
 }
 async function reloadCurrentFont() {
