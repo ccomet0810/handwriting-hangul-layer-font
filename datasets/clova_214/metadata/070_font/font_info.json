@@ -1,0 +1,9 @@
+{
+  "font_id": "070_font",
+  "display_name": "암스테르담",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\암스테르담\\나눔손글씨 암스테르담.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\070_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\070_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\070_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\070_font"
+}

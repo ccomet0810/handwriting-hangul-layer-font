@@ -1,0 +1,9 @@
+{
+  "font_id": "004_font",
+  "display_name": "강부장님체",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\강부장님체\\나눔손글씨 강부장님체.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\004_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\004_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\004_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\004_font"
+}

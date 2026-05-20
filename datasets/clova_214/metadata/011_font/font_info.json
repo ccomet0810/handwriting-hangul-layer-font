@@ -1,0 +1,9 @@
+{
+  "font_id": "011_font",
+  "display_name": "기쁨밝음",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\기쁨밝음\\나눔손글씨 기쁨밝음.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\011_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\011_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\011_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\011_font"
+}

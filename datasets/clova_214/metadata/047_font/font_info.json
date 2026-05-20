@@ -1,0 +1,9 @@
+{
+  "font_id": "047_font",
+  "display_name": "부장님_눈치체",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\부장님_눈치체\\나눔손글씨 부장님 눈치체.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\047_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\047_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\047_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\047_font"
+}

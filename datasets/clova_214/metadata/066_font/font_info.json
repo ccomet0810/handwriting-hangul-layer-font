@@ -1,0 +1,9 @@
+{
+  "font_id": "066_font",
+  "display_name": "아빠의_연애편지",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\아빠의_연애편지\\나눔손글씨 아빠의 연애편지.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\066_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\066_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\066_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\066_font"
+}

@@ -1,0 +1,9 @@
+{
+  "font_id": "084_font",
+  "display_name": "왼손잡이도_예뻐",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\왼손잡이도_예뻐\\나눔손글씨 왼손잡이도 예뻐 (1).ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\084_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\084_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\084_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\084_font"
+}

@@ -1,0 +1,9 @@
+{
+  "font_id": "058_font",
+  "display_name": "소방관의_기도",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\소방관의_기도\\나눔손글씨 소방관의 기도.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\058_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\058_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\058_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\058_font"
+}

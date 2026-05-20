@@ -1,0 +1,9 @@
+{
+  "font_id": "109_font",
+  "display_name": "힘내라는_말보단",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\힘내라는_말보단\\나눔손글씨 힘내라는 말보단.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\109_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\109_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\109_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\109_font"
+}

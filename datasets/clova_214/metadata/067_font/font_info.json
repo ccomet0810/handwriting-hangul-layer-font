@@ -1,0 +1,9 @@
+{
+  "font_id": "067_font",
+  "display_name": "아인맘_손글씨",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\아인맘_손글씨\\나눔손글씨 아인맘 손글씨.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\067_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\067_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\067_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\067_font"
+}

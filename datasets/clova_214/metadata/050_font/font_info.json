@@ -1,0 +1,9 @@
+{
+  "font_id": "050_font",
+  "display_name": "빵구니맘_손글씨",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\빵구니맘_손글씨\\나눔손글씨 빵구니맘 손글씨.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\050_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\050_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\050_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\050_font"
+}

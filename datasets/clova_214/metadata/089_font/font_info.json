@@ -1,0 +1,9 @@
+{
+  "font_id": "089_font",
+  "display_name": "잘하고_있어",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\잘하고_있어\\나눔손글씨 잘하고 있어.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\089_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\089_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\089_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\089_font"
+}

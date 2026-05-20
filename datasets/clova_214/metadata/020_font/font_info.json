@@ -1,0 +1,9 @@
+{
+  "font_id": "020_font",
+  "display_name": "다시_시작해",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\다시_시작해\\나눔손글씨 다시 시작해.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\020_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\020_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\020_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\020_font"
+}

@@ -1,0 +1,9 @@
+{
+  "font_id": "093_font",
+  "display_name": "중학생",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\중학생\\나눔손글씨 중학생.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\093_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\093_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\093_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\093_font"
+}

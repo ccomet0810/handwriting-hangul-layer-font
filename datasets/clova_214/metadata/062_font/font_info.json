@@ -1,0 +1,9 @@
+{
+  "font_id": "062_font",
+  "display_name": "신혼부부",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\신혼부부\\나눔손글씨 신혼부부.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\062_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\062_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\062_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\062_font"
+}

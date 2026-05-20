@@ -1,0 +1,9 @@
+{
+  "font_id": "018_font",
+  "display_name": "노력하는_동희",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\노력하는_동희\\나눔손글씨 노력하는 동희.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\018_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\018_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\018_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\018_font"
+}

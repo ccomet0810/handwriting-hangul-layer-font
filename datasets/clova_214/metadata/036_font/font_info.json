@@ -1,0 +1,9 @@
+{
+  "font_id": "036_font",
+  "display_name": "무궁화",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\무궁화\\나눔손글씨 무궁화.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\036_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\036_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\036_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\036_font"
+}

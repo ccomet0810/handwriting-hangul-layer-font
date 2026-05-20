@@ -1,0 +1,9 @@
+{
+  "font_id": "006_font",
+  "display_name": "고딕_아니고_고딩",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\고딕_아니고_고딩\\나눔손글씨 고딕 아니고 고딩.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\006_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\006_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\006_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\006_font"
+}

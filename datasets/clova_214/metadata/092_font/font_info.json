@@ -1,0 +1,9 @@
+{
+  "font_id": "092_font",
+  "display_name": "정은체",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\정은체\\나눔손글씨 정은체.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\092_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\092_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\092_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\092_font"
+}

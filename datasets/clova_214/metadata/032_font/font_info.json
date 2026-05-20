@@ -1,0 +1,9 @@
+{
+  "font_id": "032_font",
+  "display_name": "또박또박",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\또박또박\\나눔손글씨 또박또박.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\032_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\032_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\032_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\032_font"
+}

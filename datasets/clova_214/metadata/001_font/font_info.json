@@ -1,0 +1,9 @@
+{
+  "font_id": "001_font",
+  "display_name": "가람연꽃",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\가람연꽃\\나눔손글씨 가람연꽃.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\001_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\001_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\001_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\001_font"
+}

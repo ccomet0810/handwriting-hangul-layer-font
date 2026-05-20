@@ -1,0 +1,9 @@
+{
+  "font_id": "088_font",
+  "display_name": "자부심지우",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\자부심지우\\나눔손글씨 자부심지우.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\088_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\088_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\088_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\088_font"
+}

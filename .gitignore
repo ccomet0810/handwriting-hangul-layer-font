@@ -7,7 +7,6 @@ datasets/raw_sheets/*
 datasets/cropped_214/*
 datasets/glyphs_214/*
 datasets/masks_layer_214/*
-datasets/clova_214/*
 datasets/train_*/
 runs/*
 

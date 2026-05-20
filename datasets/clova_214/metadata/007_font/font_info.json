@@ -1,0 +1,9 @@
+{
+  "font_id": "007_font",
+  "display_name": "고려글꼴",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\고려글꼴\\나눔손글씨 고려글꼴.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\007_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\007_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\007_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\007_font"
+}

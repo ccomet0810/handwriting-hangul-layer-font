@@ -1,0 +1,9 @@
+{
+  "font_id": "015_font",
+  "display_name": "나는_이겨낸다",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\나는_이겨낸다\\나눔손글씨 나는 이겨낸다.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\015_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\015_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\015_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\015_font"
+}

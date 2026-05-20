@@ -1,0 +1,9 @@
+{
+  "font_id": "075_font",
+  "display_name": "여름글씨",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\여름글씨\\나눔손글씨 여름글씨.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\075_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\075_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\075_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\075_font"
+}

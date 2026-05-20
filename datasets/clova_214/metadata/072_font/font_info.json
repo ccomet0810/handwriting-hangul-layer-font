@@ -1,0 +1,9 @@
+{
+  "font_id": "072_font",
+  "display_name": "야채장수_백금례",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\야채장수_백금례\\나눔손글씨 야채장수 백금례.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\072_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\072_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\072_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\072_font"
+}

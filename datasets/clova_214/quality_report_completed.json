@@ -1,0 +1,52 @@
+[
+  {
+    "font_id": "002_font",
+    "name": "갈맷글",
+    "total": 214,
+    "saved": 214,
+    "missing": 0,
+    "avg_coverage": 0.9997913054558744,
+    "avg_extra": 0.0,
+    "avg_overlap": 0.000450810870001425,
+    "avg_components": 3.985981308411215,
+    "empty_required": 0,
+    "nonempty_absent": 2,
+    "low_coverage": 0,
+    "high_extra": 0,
+    "examples": {
+      "empty_required": [],
+      "nonempty_absent": [
+        "014_UAD18/T",
+        "112_UC1C4/T"
+      ],
+      "low_coverage": [],
+      "high_extra": []
+    }
+  },
+  {
+    "font_id": "001_font",
+    "name": "가람연꽃",
+    "total": 214,
+    "saved": 214,
+    "missing": 0,
+    "avg_coverage": 0.9998835246766591,
+    "avg_extra": 0.0,
+    "avg_overlap": 0.0024604309868654496,
+    "avg_components": 3.0981308411214954,
+    "empty_required": 0,
+    "nonempty_absent": 4,
+    "low_coverage": 0,
+    "high_extra": 0,
+    "examples": {
+      "empty_required": [],
+      "nonempty_absent": [
+        "012_UACFC/T",
+        "112_UC1C4/T",
+        "125_UC49C/T",
+        "159_UCAF4/T"
+      ],
+      "low_coverage": [],
+      "high_extra": []
+    }
+  }
+]

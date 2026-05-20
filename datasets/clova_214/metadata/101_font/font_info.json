@@ -1,0 +1,9 @@
+{
+  "font_id": "101_font",
+  "display_name": "하람체",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\하람체\\나눔손글씨 하람체.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\101_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\101_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\101_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\101_font"
+}

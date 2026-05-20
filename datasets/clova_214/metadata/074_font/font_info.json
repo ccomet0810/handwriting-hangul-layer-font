@@ -1,0 +1,9 @@
+{
+  "font_id": "074_font",
+  "display_name": "엉겅퀴체",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\엉겅퀴체\\나눔손글씨 엉겅퀴체.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\074_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\074_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\074_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\074_font"
+}

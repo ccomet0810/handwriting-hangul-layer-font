@@ -1,0 +1,9 @@
+{
+  "font_id": "071_font",
+  "display_name": "야근하는_김주임",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\야근하는_김주임\\나눔손글씨 야근하는 김주임.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\071_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\071_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\071_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\071_font"
+}

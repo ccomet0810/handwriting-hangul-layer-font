@@ -1,0 +1,9 @@
+{
+  "font_id": "107_font",
+  "display_name": "희망누리",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\희망누리\\나눔손글씨 희망누리.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\107_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\107_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\107_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\107_font"
+}

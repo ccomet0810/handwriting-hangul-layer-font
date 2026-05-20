@@ -1,0 +1,9 @@
+{
+  "font_id": "026_font",
+  "display_name": "대한민국_열사체",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\대한민국_열사체\\나눔손글씨 대한민국 열사체.ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\026_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\026_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\026_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\026_font"
+}

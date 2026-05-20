@@ -1,0 +1,9 @@
+{
+  "font_id": "083_font",
+  "display_name": "외할머니글씨",
+  "font_path": "C:\\Users\\ccomet0810\\Documents\\GitHub\\handwriting-to-ai-font\\clova-all\\clova-all\\외할머니글씨\\나눔손글씨 외할머니글씨 (1).ttf",
+  "glyph_dir": "datasets\\clova_214\\glyphs\\083_font",
+  "mask_dir": "datasets\\clova_214\\masks_layer\\083_font",
+  "draft_dir": "datasets\\clova_214\\draft_masks_layer\\083_font",
+  "pred_dir": "datasets\\clova_214\\predictions\\083_font"
+}
