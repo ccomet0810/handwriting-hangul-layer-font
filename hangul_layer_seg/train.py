@@ -19,20 +19,21 @@ def import_training_deps():
     try:
         from .dataset import HangulLayerDataset, train_val_split
         from .losses import MultiLabelLayerLoss
-        from .models import UNet
+        from .models import ConditionalUNet, UNet
         from .utils.layer_mask_io import LAYERS, make_layer_overlay
     except ImportError:
         from dataset import HangulLayerDataset, train_val_split
         from losses import MultiLabelLayerLoss
-        from models import UNet
+        from models import ConditionalUNet, UNet
         from utils.layer_mask_io import LAYERS, make_layer_overlay
-    return torch, Image, DataLoader, HangulLayerDataset, train_val_split, MultiLabelLayerLoss, UNet, LAYERS, make_layer_overlay
+    return torch, Image, DataLoader, HangulLayerDataset, train_val_split, MultiLabelLayerLoss, ConditionalUNet, UNet, LAYERS, make_layer_overlay
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train a 3-channel sigmoid Hangul layer segmentation model.")
     parser.add_argument("--glyph_dir", required=True)
     parser.add_argument("--mask_dir", required=True)
+    parser.add_argument("--font_ids", default="", help="Optional comma-separated top-level font ids to include.")
     parser.add_argument("--save_dir", default="runs/layer_unet_baseline")
     parser.add_argument("--image_size", type=int, default=128)
     parser.add_argument("--epochs", type=int, default=50)
@@ -44,6 +45,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--num_workers", type=int, default=0)
     parser.add_argument("--base_channels", type=int, default=32)
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda", "mps"])
+    parser.add_argument("--mapping_csv", default=None, help="Optional mapping_214.csv path for conditional training metadata.")
+    parser.add_argument("--conditional", action="store_true", help="Train ConditionalUNet with glyph composition metadata.")
+    parser.add_argument("--condition_embed_dim", type=int, default=8, help="Embedding dimension per condition field.")
+    parser.add_argument(
+        "--no_final_t_fp_penalty",
+        type=float,
+        default=0.0,
+        help="Extra penalty weight for T-channel false positives on glyphs with TIndex == 0. Requires --mapping_csv.",
+    )
     parser.add_argument("--cache_in_memory", action="store_true", help="Preload resized images and masks into RAM.")
     parser.add_argument("--amp", action="store_true", help="Use CUDA automatic mixed precision when available.")
     parser.add_argument("--channels_last", action="store_true", help="Use channels_last memory format on CUDA.")
@@ -70,7 +80,18 @@ def autocast_context(torch, device, enabled: bool):
     return torch.amp.autocast(device_type=device.type, enabled=device.type == "cuda")
 
 
-def run_epoch(model, loader, criterion, device, torch, optimizer=None, scaler=None, amp: bool = False, channels_last: bool = False) -> float:
+def run_epoch(
+    model,
+    loader,
+    criterion,
+    device,
+    torch,
+    optimizer=None,
+    scaler=None,
+    amp: bool = False,
+    channels_last: bool = False,
+    conditional: bool = False,
+) -> float:
     train = optimizer is not None
     model.train(train)
     total_loss = 0.0
@@ -79,12 +100,14 @@ def run_epoch(model, loader, criterion, device, torch, optimizer=None, scaler=No
         images = batch["image"].to(device, non_blocking=True)
         target = batch["target"].to(device, non_blocking=True)
         valid = batch["valid"].to(device, non_blocking=True)
+        condition = batch["condition"].to(device, non_blocking=True) if conditional else None
+        no_final_t = batch["TIndex"].to(device, non_blocking=True) == 0 if "TIndex" in batch else None
         if channels_last:
             images = images.contiguous(memory_format=torch.channels_last)
         with torch.set_grad_enabled(train):
             with autocast_context(torch, device, amp):
-                logits = model(images)
-                loss = criterion(logits, target, valid)
+                logits = model(images, condition) if conditional else model(images)
+                loss = criterion(logits, target, valid, no_final_t=no_final_t)
             if train:
                 optimizer.zero_grad(set_to_none=True)
                 if scaler is not None and scaler.is_enabled():
@@ -99,14 +122,27 @@ def run_epoch(model, loader, criterion, device, torch, optimizer=None, scaler=No
     return total_loss / max(total_count, 1)
 
 
-def save_sample_grid(model, loader, device, out_path: Path, image_size: int, torch, Image, make_layer_overlay, amp: bool = False) -> None:
+def save_sample_grid(
+    model,
+    loader,
+    device,
+    out_path: Path,
+    image_size: int,
+    torch,
+    Image,
+    make_layer_overlay,
+    amp: bool = False,
+    conditional: bool = False,
+) -> None:
     model.eval()
     try:
         batch = next(iter(loader))
     except StopIteration:
         return
     with torch.no_grad(), autocast_context(torch, device, amp):
-        logits = model(batch["image"].to(device))
+        images = batch["image"].to(device)
+        condition = batch["condition"].to(device) if conditional else None
+        logits = model(images, condition) if conditional else model(images)
         probs = torch.sigmoid(logits).cpu().numpy()
     imgs = (batch["image"].squeeze(1).numpy() * 255).clip(0, 255).astype("uint8")
     targets = batch["target"].numpy()
@@ -126,7 +162,7 @@ def save_sample_grid(model, loader, device, out_path: Path, image_size: int, tor
     sheet.save(out_path)
 
 
-def save_checkpoint(path: Path, model, optimizer, epoch: int, val_loss: float, args: argparse.Namespace, torch) -> None:
+def save_checkpoint(path: Path, model, optimizer, epoch: int, val_loss: float, args: argparse.Namespace, model_kwargs: dict, torch) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     raw_model = model._orig_mod if hasattr(model, "_orig_mod") else model
     torch.save(
@@ -135,7 +171,8 @@ def save_checkpoint(path: Path, model, optimizer, epoch: int, val_loss: float, a
             "val_loss": val_loss,
             "model_state": raw_model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
-            "model_kwargs": {"in_channels": 1, "num_classes": 3, "base_channels": args.base_channels},
+            "model_type": "conditional_unet" if args.conditional else "unet",
+            "model_kwargs": model_kwargs,
             "image_size": args.image_size,
             "layers": ["L", "V", "T"],
             "activation": "sigmoid",
@@ -154,10 +191,17 @@ def main() -> None:
         HangulLayerDataset,
         train_val_split,
         MultiLabelLayerLoss,
+        ConditionalUNet,
         UNet,
         _LAYERS,
         make_layer_overlay,
     ) = import_training_deps()
+    if args.conditional and args.mapping_csv is None:
+        raise SystemExit("--conditional requires --mapping_csv")
+    if args.no_final_t_fp_penalty > 0 and args.mapping_csv is None:
+        raise SystemExit("--no_final_t_fp_penalty requires --mapping_csv")
+    if args.condition_embed_dim <= 0:
+        raise SystemExit("--condition_embed_dim must be greater than 0")
     torch.manual_seed(args.seed)
     save_dir = Path(args.save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -171,6 +215,8 @@ def main() -> None:
         args.mask_dir,
         image_size=args.image_size,
         cache_in_memory=args.cache_in_memory,
+        mapping_csv=args.mapping_csv,
+        font_ids=[item.strip() for item in args.font_ids.split(",") if item.strip()] or None,
     )
     if len(dataset) == 0:
         raise SystemExit(f"No paired layer samples found under {args.glyph_dir} and {args.mask_dir}.")
@@ -184,7 +230,21 @@ def main() -> None:
         loader_kwargs.update({"persistent_workers": True, "prefetch_factor": 2})
     train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, **loader_kwargs)
     val_loader = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, **loader_kwargs)
-    model = UNet(in_channels=1, num_classes=3, base_channels=args.base_channels).to(device)
+    if args.conditional:
+        model_kwargs = {
+            "in_channels": 1,
+            "num_classes": 3,
+            "base_channels": args.base_channels,
+            "condition_embed_dim": args.condition_embed_dim,
+            "l_index_count": dataset.condition_vocab_sizes["LIndex"],
+            "v_index_count": dataset.condition_vocab_sizes["VIndex"],
+            "t_index_count": dataset.condition_vocab_sizes["TIndex"],
+            "vowel_group_count": dataset.condition_vocab_sizes["vowel_group"],
+        }
+        model = ConditionalUNet(**model_kwargs).to(device)
+    else:
+        model_kwargs = {"in_channels": 1, "num_classes": 3, "base_channels": args.base_channels}
+        model = UNet(**model_kwargs).to(device)
     if args.channels_last and device.type == "cuda":
         model = model.to(memory_format=torch.channels_last)
     if args.compile:
@@ -192,7 +252,10 @@ def main() -> None:
             model = torch.compile(model)
         except Exception as exc:
             print(f"torch.compile disabled: {type(exc).__name__}: {exc}")
-    criterion = MultiLabelLayerLoss(dice_loss_weight=args.dice_loss_weight)
+    criterion = MultiLabelLayerLoss(
+        dice_loss_weight=args.dice_loss_weight,
+        no_final_t_fp_penalty=args.no_final_t_fp_penalty,
+    )
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     scaler = torch.amp.GradScaler("cuda", enabled=args.amp and device.type == "cuda")
 
@@ -213,6 +276,7 @@ def main() -> None:
                 scaler=scaler,
                 amp=args.amp,
                 channels_last=args.channels_last and device.type == "cuda",
+                conditional=args.conditional,
             )
             should_validate = epoch == 1 or epoch == args.epochs or (args.val_interval > 0 and epoch % args.val_interval == 0)
             if should_validate:
@@ -224,17 +288,29 @@ def main() -> None:
                     torch,
                     amp=args.amp,
                     channels_last=args.channels_last and device.type == "cuda",
+                    conditional=args.conditional,
                 )
             seconds = time.perf_counter() - start
             writer.writerow({"epoch": epoch, "train_loss": train_loss, "val_loss": last_val, "seconds": round(seconds, 3)})
             handle.flush()
             if args.save_interval > 0 and (epoch == 1 or epoch == args.epochs or epoch % args.save_interval == 0):
-                save_checkpoint(save_dir / "checkpoint_latest.pt", model, optimizer, epoch, last_val, args, torch)
+                save_checkpoint(save_dir / "checkpoint_latest.pt", model, optimizer, epoch, last_val, args, model_kwargs, torch)
             if should_validate and last_val < best_val:
                 best_val = last_val
-                save_checkpoint(save_dir / "checkpoint_best.pt", model, optimizer, epoch, last_val, args, torch)
+                save_checkpoint(save_dir / "checkpoint_best.pt", model, optimizer, epoch, last_val, args, model_kwargs, torch)
             if args.sample_interval > 0 and (epoch == 1 or epoch == args.epochs or epoch % args.sample_interval == 0):
-                save_sample_grid(model, val_loader, device, save_dir / "sample_predictions.png", args.image_size, torch, Image, make_layer_overlay, amp=args.amp)
+                save_sample_grid(
+                    model,
+                    val_loader,
+                    device,
+                    save_dir / "sample_predictions.png",
+                    args.image_size,
+                    torch,
+                    Image,
+                    make_layer_overlay,
+                    amp=args.amp,
+                    conditional=args.conditional,
+                )
             print(f"epoch {epoch:03d}/{args.epochs} train_loss={train_loss:.4f} val_loss={last_val:.4f} seconds={seconds:.2f}")
 
 

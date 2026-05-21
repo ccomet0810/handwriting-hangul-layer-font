@@ -65,6 +65,49 @@ class UNet(nn.Module):
         return self.head(d1)
 
 
+class ConditionalUNet(nn.Module):
+    """U-Net conditioned on Hangul composition indices."""
+
+    def __init__(
+        self,
+        in_channels: int = 1,
+        num_classes: int = 3,
+        base_channels: int = 32,
+        condition_embed_dim: int = 8,
+        l_index_count: int = 1,
+        v_index_count: int = 1,
+        t_index_count: int = 1,
+        vowel_group_count: int = 1,
+    ) -> None:
+        super().__init__()
+        self.l_embedding = nn.Embedding(l_index_count, condition_embed_dim)
+        self.v_embedding = nn.Embedding(v_index_count, condition_embed_dim)
+        self.t_embedding = nn.Embedding(t_index_count, condition_embed_dim)
+        self.vowel_group_embedding = nn.Embedding(vowel_group_count, condition_embed_dim)
+        self.condition_channels = condition_embed_dim * 4
+        self.unet = UNet(
+            in_channels=in_channels + self.condition_channels,
+            num_classes=num_classes,
+            base_channels=base_channels,
+        )
+
+    def forward(self, x: torch.Tensor, condition: torch.Tensor) -> torch.Tensor:
+        if condition.ndim != 2 or condition.shape[1] != 4:
+            raise ValueError(f"condition must have shape [B, 4], got {tuple(condition.shape)}")
+        condition = condition.long()
+        condition_vector = torch.cat(
+            [
+                self.l_embedding(condition[:, 0]),
+                self.v_embedding(condition[:, 1]),
+                self.t_embedding(condition[:, 2]),
+                self.vowel_group_embedding(condition[:, 3]),
+            ],
+            dim=1,
+        )
+        condition_map = condition_vector[:, :, None, None].expand(-1, -1, x.shape[-2], x.shape[-1])
+        return self.unet(torch.cat([x, condition_map], dim=1))
+
+
 def _match_size(x: torch.Tensor, ref: torch.Tensor) -> torch.Tensor:
     if x.shape[-2:] == ref.shape[-2:]:
         return x

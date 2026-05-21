@@ -27,6 +27,16 @@ aside {
   padding: 14px 16px;
   border-bottom: 1px solid #d9dde3;
 }
+.view-switch {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid #d9dde3;
+}
+.view-switch button {
+  padding: 8px 6px;
+}
 #files {
   padding: 8px;
   overflow: auto;
@@ -39,6 +49,32 @@ aside {
   gap: 8px;
   padding: 10px 8px;
   border-bottom: 1px solid #d9dde3;
+}
+.side-config {
+  display: grid;
+  gap: 10px;
+  padding: 10px 8px;
+  border-bottom: 1px solid #d9dde3;
+}
+.side-config h2 {
+  margin: 0;
+  font-size: 14px;
+}
+.side-config label {
+  display: grid;
+  gap: 5px;
+  color: #5f6368;
+  font-size: 12px;
+}
+.side-config input,
+.side-config select {
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid #c7ccd4;
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: #fff;
+  color: #202124;
 }
 .font-panel select {
   width: 100%;
@@ -83,12 +119,24 @@ main {
   display: flex;
   flex-direction: column;
 }
+.view {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 button {
   border: 1px solid #c7ccd4;
   background: #fff;
   border-radius: 6px;
   padding: 8px 10px;
   cursor: pointer;
+}
+button.primary {
+  border-color: #185abc;
+  background: #1a73e8;
+  color: #fff;
 }
 button.active {
   border-color: #1a73e8;
@@ -114,6 +162,7 @@ button.active {
   overflow: hidden;
   background: #f6f7f8;
   cursor: default;
+  padding-bottom: 168px;
 }
 .viewport.panning {
   cursor: grab;
@@ -180,6 +229,167 @@ canvas {
 .layer-preview.absent span {
   color: #9aa0a6;
 }
+.run-preview-screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 16px 168px;
+}
+#runPreview {
+  width: 512px;
+  height: 512px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid #d9dde3;
+  image-rendering: pixelated;
+}
+#runMessage {
+  margin: 0;
+  color: #5f6368;
+  font-size: 13px;
+}
+.workflow {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  align-content: start;
+  gap: 12px;
+}
+.panel {
+  background: #fff;
+  border: 1px solid #d9dde3;
+  border-radius: 6px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+.panel.wide {
+  grid-column: 1 / -1;
+}
+.panel h2 {
+  margin: 0;
+  font-size: 14px;
+}
+.panel label {
+  display: grid;
+  gap: 6px;
+  color: #5f6368;
+  font-size: 12px;
+}
+.panel input,
+.panel select,
+header select {
+  min-height: 34px;
+  border: 1px solid #c7ccd4;
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: #fff;
+  color: #202124;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.checks.stacked {
+  display: grid;
+  gap: 6px;
+}
+.checks label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.jobs-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+.jobs-list {
+  border-right: 1px solid #d9dde3;
+  background: #fff;
+  overflow: auto;
+  padding: 8px;
+}
+.job-row {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  margin-bottom: 6px;
+}
+.job-row span,
+.job-row small {
+  color: #5f6368;
+}
+.job-log {
+  margin: 0;
+  padding: 14px;
+  min-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  background: #111827;
+  color: #e5e7eb;
+  border-radius: 6px;
+  font: 12px/1.45 Consolas, "Courier New", monospace;
+}
+.metric-strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 12px;
+}
+.metric-strip div {
+  background: #fff;
+  border: 1px solid #d9dde3;
+  border-radius: 6px;
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+}
+.metric-strip strong {
+  font-size: 22px;
+}
+.metric-strip span {
+  color: #5f6368;
+  font-size: 12px;
+}
+.floating-layers {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 12;
+  padding: 10px;
+  border: 1px solid #d9dde3;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 24px rgba(32, 33, 36, 0.16);
+  backdrop-filter: blur(8px);
+  width: max-content;
+  max-width: calc(100% - 32px);
+}
+.layer-preview img {
+  width: 128px;
+  height: 128px;
+  border: 1px solid #d9dde3;
+  background: #fff;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.jobs-layout .job-log {
+  border-radius: 0;
+}
 #edit.brush-cursor {
   cursor: none;
 }
@@ -203,4 +413,6 @@ canvas {
 @media (max-width: 900px) {
   body { grid-template-columns: 1fr; overflow: auto; }
   aside { max-height: 220px; border-right: 0; border-bottom: 1px solid #d9dde3; }
+  .workflow { grid-template-columns: 1fr; }
+  .jobs-layout { grid-template-columns: 1fr; }
 }

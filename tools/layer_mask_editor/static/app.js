@@ -7,8 +7,16 @@ const COLORS = {
 const state = {
   files: [],
   fonts: [],
+  runs: [],
+  runFiles: [],
   managedFonts: false,
   fontId: "",
+  runId: "",
+  runKind: "composite",
+  runIndex: 0,
+  view: "editor",
+  selectedJobId: "",
+  jobPoll: null,
   index: 0,
   layer: "L",
   mode: "brush",
@@ -45,6 +53,42 @@ const els = {
   previewL: document.getElementById("previewL"),
   previewV: document.getElementById("previewV"),
   previewT: document.getElementById("previewT"),
+  runSelect: document.getElementById("runSelect"),
+  runKind: document.getElementById("runKind"),
+  runPreview: document.getElementById("runPreview"),
+  runPreviewL: document.getElementById("runPreviewL"),
+  runPreviewV: document.getElementById("runPreviewV"),
+  runPreviewT: document.getElementById("runPreviewT"),
+  runMessage: document.getElementById("runMessage"),
+  runGlyphLabel: document.getElementById("runGlyphLabel"),
+  editorView: document.getElementById("editorView"),
+  runView: document.getElementById("runView"),
+  showEditor: document.getElementById("showEditor"),
+  showRuns: document.getElementById("showRuns"),
+  showTrain: document.getElementById("showTrain"),
+  showPredict: document.getElementById("showPredict"),
+  showJobs: document.getElementById("showJobs"),
+  trainView: document.getElementById("trainView"),
+  predictView: document.getElementById("predictView"),
+  jobsView: document.getElementById("jobsView"),
+  trainSidePanel: document.getElementById("trainSidePanel"),
+  predictSidePanel: document.getElementById("predictSidePanel"),
+  runsSidePanel: document.getElementById("runsSidePanel"),
+  startTrain: document.getElementById("startTrain"),
+  startPredict: document.getElementById("startPredict"),
+  trainLog: document.getElementById("trainLog"),
+  predictLog: document.getElementById("predictLog"),
+  predictFont: document.getElementById("predictFont"),
+  jobsList: document.getElementById("jobsList"),
+  jobLog: document.getElementById("jobLog"),
+  refreshJobs: document.getElementById("refreshJobs"),
+  stopJob: document.getElementById("stopJob"),
+  trainCompletedCount: document.getElementById("trainCompletedCount"),
+  trainSavedCount: document.getElementById("trainSavedCount"),
+  trainDeviceHint: document.getElementById("trainDeviceHint"),
+  predictFontGlyphCount: document.getElementById("predictFontGlyphCount"),
+  predictThresholdHint: document.getElementById("predictThresholdHint"),
+  predictOutputHint: document.getElementById("predictOutputHint"),
   brush: document.getElementById("brush"),
   brushValue: document.getElementById("brushValue"),
   brushCursor: document.getElementById("brushCursor"),
@@ -64,6 +108,7 @@ const ctx = {
 };
 
 function current() { return state.files[state.index]; }
+function currentRunGlyph() { return state.runFiles[state.runIndex]; }
 function currentFont() { return state.fonts.find((font) => font.fontId === state.fontId); }
 function msg(text) { els.message.textContent = text; }
 function apiUrl(path, params = {}) {
@@ -135,7 +180,19 @@ function applyZoom() {
 }
 function renderList() {
   els.files.innerHTML = "";
-  els.progress.textContent = `${state.files.filter((f) => f.saved).length}/${state.files.length}`;
+  els.progress.textContent = state.view === "runs"
+    ? `${state.runFiles.length ? state.runIndex + 1 : 0}/${state.runFiles.length}`
+    : `${state.files.filter((f) => f.saved).length}/${state.files.length}`;
+  if (state.view === "runs") {
+    state.runFiles.forEach((file, i) => {
+      const b = document.createElement("button");
+      b.className = `file ${i === state.runIndex ? "active" : ""}`;
+      b.innerHTML = `<span></span><span>${file.code}</span><span>${file.char || ""}</span>`;
+      b.onclick = () => goRunGlyph(i);
+      els.files.appendChild(b);
+    });
+    return;
+  }
   state.files.forEach((file, i) => {
     const b = document.createElement("button");
     b.className = `file ${i === state.index ? "active" : ""}`;
@@ -144,9 +201,17 @@ function renderList() {
     els.files.appendChild(b);
   });
 }
+function renderSidebar() {
+  const showFont = state.view === "editor" || state.view === "predict";
+  els.fontPanel.classList.toggle("hidden", !showFont);
+  els.files.classList.toggle("hidden", !(state.view === "editor" || state.view === "runs"));
+  els.trainSidePanel.classList.toggle("hidden", state.view !== "train");
+  els.predictSidePanel.classList.toggle("hidden", state.view !== "predict");
+  els.runsSidePanel.classList.toggle("hidden", state.view !== "runs");
+  renderList();
+}
 function renderFonts() {
   if (!state.managedFonts) return;
-  els.fontPanel.classList.remove("hidden");
   els.fontSelect.innerHTML = "";
   state.fonts.forEach((font) => {
     const option = document.createElement("option");
@@ -157,6 +222,92 @@ function renderFonts() {
   els.fontSelect.value = state.fontId;
   const font = currentFont();
   els.fontMeta.textContent = font ? `${font.displayName} - ${font.status} - saved ${font.savedCount}/${font.glyphCount}` : "";
+  renderPredictFonts();
+  renderTrainingStats();
+}
+function renderPredictFonts() {
+  if (!els.predictFont) return;
+  const previous = els.predictFont.value;
+  els.predictFont.innerHTML = "";
+  state.fonts.filter((font) => font.glyphCount > 0 && font.status !== "deleted").forEach((font) => {
+    const option = document.createElement("option");
+    option.value = font.fontId;
+    option.textContent = `${font.fontId} | ${font.displayName} | ${font.status}`;
+    els.predictFont.appendChild(option);
+  });
+  if (previous) els.predictFont.value = previous;
+  if (!els.predictFont.value && state.fontId) els.predictFont.value = state.fontId;
+  renderPredictStats();
+}
+function renderTrainingStats() {
+  if (!els.trainCompletedCount) return;
+  const completed = state.fonts.filter((font) => font.status === "completed");
+  els.trainCompletedCount.textContent = String(completed.length);
+  els.trainSavedCount.textContent = String(completed.reduce((sum, font) => sum + Number(font.savedCount || 0), 0));
+  els.trainDeviceHint.textContent = document.getElementById("trainDevice")?.value || "cuda";
+}
+function renderPredictStats() {
+  if (!els.predictFontGlyphCount || !els.predictFont) return;
+  const font = state.fonts.find((item) => item.fontId === els.predictFont.value);
+  els.predictFontGlyphCount.textContent = font ? String(font.glyphCount) : "-";
+  els.predictThresholdHint.textContent = document.getElementById("predictThreshold")?.value || "0.5";
+  els.predictOutputHint.textContent = document.getElementById("predictOutputRun")?.value || "-";
+}
+function renderRuns() {
+  if (!state.runs.length) {
+    els.runSelect.innerHTML = "";
+    return;
+  }
+  els.runSelect.innerHTML = "";
+  state.runs.forEach((run) => {
+    const option = document.createElement("option");
+    option.value = run.id;
+    option.textContent = `${run.label} (${run.glyphCount})`;
+    els.runSelect.appendChild(option);
+  });
+  els.runSelect.value = state.runId;
+  els.runKind.value = state.runKind;
+}
+function renderRunGlyphs() {
+  const file = currentRunGlyph();
+  els.runGlyphLabel.textContent = file ? `${file.code} ${file.char || ""}` : "-";
+  renderList();
+}
+function setView(view) {
+  state.view = view;
+  els.editorView.classList.toggle("hidden", view !== "editor");
+  els.runView.classList.toggle("hidden", view !== "runs");
+  els.trainView.classList.toggle("hidden", view !== "train");
+  els.predictView.classList.toggle("hidden", view !== "predict");
+  els.jobsView.classList.toggle("hidden", view !== "jobs");
+  document.querySelectorAll("[data-view-button]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.viewButton === view);
+  });
+  renderSidebar();
+  if (view === "runs") renderRunPreview();
+  if (view === "jobs") refreshJobs();
+}
+function renderRunPreview() {
+  const file = currentRunGlyph();
+  if (!state.runId || !file) return;
+  const url = apiUrl("/api/run-preview", {
+    run: state.runId,
+    glyph_id: file.glyphId,
+    kind: state.runKind,
+  });
+  els.runPreview.onload = () => {
+    els.runPreview.classList.remove("hidden");
+    els.runMessage.textContent = "";
+  };
+  els.runPreview.onerror = () => {
+    els.runPreview.classList.add("hidden");
+    els.runMessage.textContent = "No prediction for this glyph in selected run.";
+  };
+  els.runPreview.src = `${url}&cache=${Date.now()}`;
+  for (const layer of ["L", "V", "T"]) {
+    const img = els[`runPreview${layer}`];
+    img.src = `${apiUrl("/api/run-preview", { run: state.runId, glyph_id: file.glyphId, kind: layer })}&cache=${Date.now()}`;
+  }
 }
 function drawGlyph() {
   ctx.glyph.clearRect(0, 0, state.size, state.size);
@@ -550,6 +701,7 @@ async function saveAndGo(delta) {
 }
 async function init() {
   await loadFonts();
+  await loadRuns();
   bindControls();
   const data = await (await fetch(apiUrl("/api/list"))).json();
   state.files = data.files;
@@ -559,6 +711,10 @@ async function init() {
     return;
   }
   await go(0);
+  renderTrainingStats();
+  renderPredictStats();
+  setView("editor");
+  await refreshJobs();
 }
 function bindControls() {
   document.querySelectorAll("[data-layer]").forEach((b) => b.onclick = () => { state.layer = b.dataset.layer; render(); });
@@ -582,6 +738,35 @@ function bindControls() {
     if (!confirm("Move this font to _deleted and exclude it from training?")) return;
     await fontAction("delete");
   };
+  els.showEditor.onclick = () => setView("editor");
+  els.showTrain.onclick = () => setView("train");
+  els.showPredict.onclick = () => setView("predict");
+  els.showRuns.onclick = () => setView("runs");
+  els.showJobs.onclick = () => setView("jobs");
+  els.startTrain.onclick = startTrain;
+  els.startPredict.onclick = startPredict;
+  els.refreshJobs.onclick = refreshJobs;
+  els.stopJob.onclick = stopSelectedJob;
+  els.runSelect.addEventListener("change", async () => {
+    state.runId = els.runSelect.value;
+    localStorage.setItem("layerEditor.runId", state.runId);
+    await loadRunFiles();
+  });
+  els.runKind.addEventListener("change", () => {
+    state.runKind = els.runKind.value;
+    localStorage.setItem("layerEditor.runKind", state.runKind);
+    renderRunPreview();
+  });
+  ["trainDevice", "predictFont", "predictThreshold", "predictOutputRun"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("input", () => {
+      renderTrainingStats();
+      renderPredictStats();
+    });
+    document.getElementById(id)?.addEventListener("change", () => {
+      renderTrainingStats();
+      renderPredictStats();
+    });
+  });
   els.brush.addEventListener("input", () => {
     updateBrushValue();
     updateBrushCursor();
@@ -671,6 +856,12 @@ function bindControls() {
     state.lastPaintPoint = null;
   });
   window.addEventListener("keydown", async (e) => {
+    if (state.view === "runs" && ["Tab", "ArrowRight", "ArrowLeft"].includes(e.key)) {
+      e.preventDefault();
+      goRunGlyph(state.runIndex + (e.key === "ArrowLeft" ? -1 : 1));
+      return;
+    }
+    if (state.view !== "editor") return;
     if (e.code === "Space") {
       e.preventDefault();
       if (state.spaceDown) return;
@@ -756,6 +947,134 @@ async function loadFonts() {
   state.fontId = (preferred || first).fontId;
   localStorage.setItem("layerEditor.fontId", state.fontId);
   renderFonts();
+}
+async function loadRuns() {
+  const data = await (await fetch("/api/runs")).json();
+  state.runs = data.runs || [];
+  if (!state.runs.length) {
+    renderRuns();
+    return;
+  }
+  const savedRun = localStorage.getItem("layerEditor.runId");
+  const savedKind = localStorage.getItem("layerEditor.runKind");
+  const preferred = state.runs.find((run) => run.id === savedRun);
+  state.runId = (preferred || state.runs[0]).id;
+  state.runKind = ["composite", "L", "V", "T"].includes(savedKind) ? savedKind : "composite";
+  localStorage.setItem("layerEditor.runId", state.runId);
+  localStorage.setItem("layerEditor.runKind", state.runKind);
+  renderRuns();
+  await loadRunFiles();
+}
+async function postJson(path, body) {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || "request failed");
+  return data;
+}
+async function startTrain() {
+  const payload = {
+    source: document.getElementById("trainSource").value,
+    fontId: state.fontId,
+    saveDir: document.getElementById("trainSaveDir").value,
+    epochs: Number(document.getElementById("trainEpochs").value),
+    batchSize: Number(document.getElementById("trainBatch").value),
+    imageSize: Number(document.getElementById("trainImageSize").value),
+    device: document.getElementById("trainDevice").value,
+    amp: document.getElementById("trainAmp").checked,
+    channelsLast: document.getElementById("trainChannelsLast").checked,
+    conditional: document.getElementById("trainConditional").checked,
+    conditionEmbedDim: Number(document.getElementById("conditionEmbedDim").value),
+    noFinalTPenalty: Number(document.getElementById("noFinalTPenalty").value),
+  };
+  try {
+    const data = await postJson("/api/start-train", payload);
+    state.selectedJobId = data.job.id;
+    setView("jobs");
+    await refreshJobs();
+  } catch (err) {
+    els.trainLog.textContent = err.message;
+  }
+}
+async function startPredict() {
+  const payload = {
+    checkpoint: document.getElementById("predictCheckpoint").value,
+    fontId: els.predictFont.value,
+    outputRun: document.getElementById("predictOutputRun").value,
+    threshold: Number(document.getElementById("predictThreshold").value),
+    device: document.getElementById("predictDevice").value,
+    suppressNoFinalT: document.getElementById("suppressNoFinalT").checked,
+    restrictToInk: document.getElementById("restrictToInk").checked,
+    inkThreshold: Number(document.getElementById("inkThreshold").value),
+    inkDilate: Number(document.getElementById("inkDilate").value),
+    minComponentArea: Number(document.getElementById("minComponentArea").value),
+  };
+  try {
+    const data = await postJson("/api/start-predict", payload);
+    state.selectedJobId = data.job.id;
+    setView("jobs");
+    await refreshJobs();
+  } catch (err) {
+    els.predictLog.textContent = err.message;
+  }
+}
+async function refreshJobs() {
+  const data = await (await fetch("/api/jobs")).json();
+  const jobs = data.jobs || [];
+  if (!state.selectedJobId && jobs.length) state.selectedJobId = jobs[0].id;
+  els.jobsList.innerHTML = "";
+  jobs.forEach((job) => {
+    const button = document.createElement("button");
+    button.className = `job-row ${job.id === state.selectedJobId ? "active" : ""}`;
+    button.innerHTML = `<strong>${job.name}</strong><span>${job.status}</span><small>${job.id}</small>`;
+    button.onclick = async () => {
+      state.selectedJobId = job.id;
+      await refreshJobs();
+    };
+    els.jobsList.appendChild(button);
+  });
+  if (state.selectedJobId) await loadJob(state.selectedJobId);
+  const running = jobs.some((job) => job.status === "running");
+  if (running && !state.jobPoll) {
+    state.jobPoll = setInterval(refreshJobs, 2000);
+  } else if (!running && state.jobPoll) {
+    clearInterval(state.jobPoll);
+    state.jobPoll = null;
+    await loadRuns();
+  }
+}
+async function loadJob(jobId) {
+  const res = await fetch(apiUrl("/api/job", { id: jobId }));
+  if (!res.ok) return;
+  const job = await res.json();
+  els.jobLog.textContent = `${job.cmd}\n\n${job.log || ""}`;
+  if (job.kind === "train") els.trainLog.textContent = job.log || "";
+  if (job.kind === "predict") els.predictLog.textContent = job.log || "";
+}
+async function stopSelectedJob() {
+  if (!state.selectedJobId) return;
+  await postJson("/api/stop-job", { jobId: state.selectedJobId });
+  await refreshJobs();
+}
+async function loadRunFiles() {
+  if (!state.runId) {
+    state.runFiles = [];
+    renderRunGlyphs();
+    return;
+  }
+  const data = await (await fetch(apiUrl("/api/run-files", { run: state.runId }))).json();
+  state.runFiles = data.files || [];
+  state.runIndex = 0;
+  renderRunGlyphs();
+  renderRunPreview();
+}
+function goRunGlyph(index) {
+  state.runIndex = Math.max(0, Math.min(state.runFiles.length - 1, index));
+  renderRunGlyphs();
+  renderRunPreview();
 }
 async function reloadCurrentFont() {
   const data = await (await fetch(apiUrl("/api/list"))).json();

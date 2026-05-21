@@ -12,6 +12,13 @@
         <strong id="title">Layer editor</strong>
         <span id="progress">0/0</span>
       </div>
+      <div class="view-switch">
+        <button data-view-button="editor" id="showEditor" class="active">Edit</button>
+        <button data-view-button="train" id="showTrain">Train</button>
+        <button data-view-button="predict" id="showPredict">Predict</button>
+        <button data-view-button="runs" id="showRuns">Runs</button>
+        <button data-view-button="jobs" id="showJobs">Jobs</button>
+      </div>
       <div id="fontPanel" class="font-panel hidden">
         <select id="fontSelect"></select>
         <div class="font-actions">
@@ -21,40 +28,105 @@
         </div>
         <p id="fontMeta"></p>
       </div>
+      <div id="trainSidePanel" class="side-config hidden">
+        <h2>Train</h2>
+        <label>Source
+          <select id="trainSource">
+            <option value="completed">Completed fonts only</option>
+            <option value="current">Selected font only</option>
+            <option value="all">All paired masks</option>
+          </select>
+        </label>
+        <label>Save run <input id="trainSaveDir" value="runs/web_train_completed" /></label>
+        <label>Epochs <input id="trainEpochs" type="number" min="1" value="50" /></label>
+        <label>Batch <input id="trainBatch" type="number" min="1" value="8" /></label>
+        <label>Image size <input id="trainImageSize" type="number" min="32" value="128" /></label>
+        <label>Device
+          <select id="trainDevice">
+            <option value="cuda">cuda</option>
+            <option value="cpu">cpu</option>
+          </select>
+        </label>
+        <div class="checks stacked">
+          <label><input id="trainAmp" type="checkbox" checked /> AMP</label>
+          <label><input id="trainChannelsLast" type="checkbox" checked /> channels_last</label>
+          <label><input id="trainConditional" type="checkbox" /> conditional</label>
+        </div>
+        <label>Embed dim <input id="conditionEmbedDim" type="number" min="1" value="8" /></label>
+        <label>T penalty <input id="noFinalTPenalty" type="number" min="0" step="0.01" value="0.1" /></label>
+        <button id="startTrain" class="primary">Start training</button>
+      </div>
+      <div id="predictSidePanel" class="side-config hidden">
+        <h2>Predict</h2>
+        <label>Checkpoint <input id="predictCheckpoint" value="runs/test_train_001/checkpoint_best.pt" /></label>
+        <label>Font
+          <select id="predictFont"></select>
+        </label>
+        <label>Output run <input id="predictOutputRun" value="runs/web_predict" /></label>
+        <label>Threshold <input id="predictThreshold" type="number" min="0" max="1" step="0.01" value="0.5" /></label>
+        <label>Ink threshold <input id="inkThreshold" type="number" min="0" max="255" value="245" /></label>
+        <label>Ink dilate <input id="inkDilate" type="number" min="0" value="1" /></label>
+        <label>Min area <input id="minComponentArea" type="number" min="0" value="16" /></label>
+        <label>Device
+          <select id="predictDevice">
+            <option value="cuda">cuda</option>
+            <option value="cpu">cpu</option>
+          </select>
+        </label>
+        <div class="checks stacked">
+          <label><input id="suppressNoFinalT" type="checkbox" checked /> suppress no-final T</label>
+          <label><input id="restrictToInk" type="checkbox" checked /> restrict to ink</label>
+        </div>
+        <button id="startPredict" class="primary">Start prediction</button>
+      </div>
+      <div id="runsSidePanel" class="side-config hidden">
+        <h2>Runs</h2>
+        <label>Run <select id="runSelect"></select></label>
+        <label>View
+          <select id="runKind">
+            <option value="composite">Composite</option>
+            <option value="L">L</option>
+            <option value="V">V</option>
+            <option value="T">T</option>
+          </select>
+        </label>
+      </div>
       <div id="files"></div>
     </aside>
     <main>
-      <header>
-        <div>
-          <strong id="glyphName">-</strong>
-          <span id="glyphChar">-</span>
-        </div>
-        <div class="controls">
-          <button id="prev">Prev</button>
-          <button id="next">Next</button>
-          <button id="loadDraft">Load draft</button>
-          <button id="save">Save</button>
-        </div>
-      </header>
-      <section class="toolbar">
-        <button data-layer="L">L</button>
-        <button data-layer="V">V</button>
-        <button data-layer="T">T</button>
-        <button data-layer="ignore">Ignore</button>
-        <button id="brushMode">Brush</button>
-        <button id="fillMode">Fill</button>
-        <button id="erase">Erase</button>
-        <label>Brush <input id="brush" type="range" min="1" max="48" value="12" /> <output id="brushValue">12 px</output></label>
-        <label><input id="strokeOnly" type="checkbox" checked /> Stroke only</label>
-        <label><input id="fillRespectLayers" type="checkbox" checked /> Fill stops at other layers</label>
-        <p id="message"></p>
-      </section>
-      <section id="viewport" class="viewport">
-        <div id="stage" class="canvases">
-          <div class="canvas-panel"><span>Glyph</span><canvas id="glyph"></canvas></div>
-          <div class="canvas-panel"><span>Composite</span><canvas id="overlay"></canvas></div>
-          <div class="canvas-panel"><span>Active Layer</span><canvas id="edit"></canvas></div>
-          <div id="layerPreviews" class="layer-previews">
+      <section id="editorView" class="view">
+        <header>
+          <div>
+            <strong id="glyphName">-</strong>
+            <span id="glyphChar">-</span>
+          </div>
+          <div class="controls">
+            <button id="prev">Prev</button>
+            <button id="next">Next</button>
+            <button id="loadDraft">Load draft</button>
+            <button id="save">Save</button>
+          </div>
+        </header>
+        <section class="toolbar">
+          <button data-layer="L">L</button>
+          <button data-layer="V">V</button>
+          <button data-layer="T">T</button>
+          <button data-layer="ignore">Ignore</button>
+          <button id="brushMode">Brush</button>
+          <button id="fillMode">Fill</button>
+          <button id="erase">Erase</button>
+          <label>Brush <input id="brush" type="range" min="1" max="48" value="12" /> <output id="brushValue">12 px</output></label>
+          <label><input id="strokeOnly" type="checkbox" checked /> Stroke only</label>
+          <label><input id="fillRespectLayers" type="checkbox" checked /> Fill stops at other layers</label>
+          <p id="message"></p>
+        </section>
+        <section id="viewport" class="viewport">
+          <div id="stage" class="canvases">
+            <div class="canvas-panel"><span>Glyph</span><canvas id="glyph"></canvas></div>
+            <div class="canvas-panel"><span>Composite</span><canvas id="overlay"></canvas></div>
+            <div class="canvas-panel"><span>Active Layer</span><canvas id="edit"></canvas></div>
+          </div>
+          <div id="layerPreviews" class="layer-previews floating-layers">
             <div class="layer-preview" data-preview-layer="L">
               <span>L</span>
               <canvas id="previewL"></canvas>
@@ -68,7 +140,87 @@
               <canvas id="previewT"></canvas>
             </div>
           </div>
-        </div>
+        </section>
+      </section>
+      <section id="runView" class="view hidden">
+        <header>
+          <div>
+            <strong>Runs preview</strong>
+            <span id="runGlyphLabel">-</span>
+          </div>
+        </header>
+        <section class="run-preview-screen">
+          <img id="runPreview" alt="Prediction preview" />
+          <p id="runMessage"></p>
+          <div id="runLayerPreviews" class="layer-previews floating-layers">
+            <div class="layer-preview">
+              <span>L</span>
+              <img id="runPreviewL" alt="L preview" />
+            </div>
+            <div class="layer-preview">
+              <span>V</span>
+              <img id="runPreviewV" alt="V preview" />
+            </div>
+            <div class="layer-preview">
+              <span>T</span>
+              <img id="runPreviewT" alt="T preview" />
+            </div>
+          </div>
+        </section>
+      </section>
+      <section id="trainView" class="view hidden">
+        <header>
+          <div>
+            <strong>Train model</strong>
+            <span>completed labels -> checkpoint</span>
+          </div>
+        </header>
+        <section class="workflow">
+          <div class="metric-strip">
+            <div><strong id="trainCompletedCount">-</strong><span>completed fonts</span></div>
+            <div><strong id="trainSavedCount">-</strong><span>saved masks</span></div>
+            <div><strong id="trainDeviceHint">cuda</strong><span>target device</span></div>
+          </div>
+          <div class="panel wide">
+            <h2>Latest job</h2>
+            <pre id="trainLog" class="job-log"></pre>
+          </div>
+        </section>
+      </section>
+      <section id="predictView" class="view hidden">
+        <header>
+          <div>
+            <strong>Predict layers</strong>
+            <span>checkpoint -> run preview</span>
+          </div>
+        </header>
+        <section class="workflow">
+          <div class="metric-strip">
+            <div><strong id="predictFontGlyphCount">-</strong><span>glyphs</span></div>
+            <div><strong id="predictThresholdHint">0.5</strong><span>threshold</span></div>
+            <div><strong id="predictOutputHint">runs/web_predict</strong><span>output</span></div>
+          </div>
+          <div class="panel wide">
+            <h2>Latest job</h2>
+            <pre id="predictLog" class="job-log"></pre>
+          </div>
+        </section>
+      </section>
+      <section id="jobsView" class="view hidden">
+        <header>
+          <div>
+            <strong>Jobs</strong>
+            <span>training and prediction logs</span>
+          </div>
+          <div class="controls">
+            <button id="refreshJobs">Refresh</button>
+            <button id="stopJob">Stop selected</button>
+          </div>
+        </header>
+        <section class="jobs-layout">
+          <div id="jobsList" class="jobs-list"></div>
+          <pre id="jobLog" class="job-log"></pre>
+        </section>
       </section>
       <div id="brushCursor"></div>
     </main>

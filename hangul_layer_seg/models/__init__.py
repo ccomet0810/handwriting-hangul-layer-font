@@ -1,3 +1,3 @@
-from .unet import UNet
+from .unet import ConditionalUNet, UNet
 
-__all__ = ["UNet"]
+__all__ = ["ConditionalUNet", "UNet"]

@@ -101,6 +101,23 @@ python hangul_layer_seg/train.py `
   --sample_interval 5
 ```
 
+Train the conditional multi-label model with Hangul composition metadata:
+
+```powershell
+python hangul_layer_seg/train.py `
+  --glyph_dir datasets/glyphs_214 `
+  --mask_dir datasets/masks_layer_214 `
+  --save_dir runs/layer_unet_conditional `
+  --image_size 128 `
+  --mapping_csv configs/mapping_214.csv `
+  --conditional `
+  --condition_embed_dim 8 `
+  --no_final_t_fp_penalty 0.1 `
+  --cache_in_memory `
+  --val_interval 5 `
+  --sample_interval 5
+```
+
 On CUDA, add these options for faster training:
 
 ```powershell
@@ -116,6 +133,32 @@ python hangul_layer_seg/predict.py `
   --ckpt runs/layer_unet_baseline/checkpoint_best.pt `
   --input_dir datasets/glyphs_214/user_001 `
   --out_dir runs/layer_unet_baseline/predictions/user_001
+```
+
+Predict layer masks and suppress the `T` layer for glyphs with no final consonant:
+
+```powershell
+python hangul_layer_seg/predict.py `
+  --ckpt runs/layer_unet_baseline/checkpoint_best.pt `
+  --input_dir datasets/glyphs_214/user_001 `
+  --out_dir runs/layer_unet_baseline/predictions/user_001 `
+  --mapping_csv configs/mapping_214.csv `
+  --suppress_no_final_t
+```
+
+Predict layer masks with ink-mask restriction and small component cleanup:
+
+```powershell
+python hangul_layer_seg/predict.py `
+  --ckpt runs/layer_unet_baseline/checkpoint_best.pt `
+  --input_dir datasets/glyphs_214/user_001 `
+  --out_dir runs/layer_unet_baseline/predictions/user_001 `
+  --mapping_csv configs/mapping_214.csv `
+  --suppress_no_final_t `
+  --restrict_to_ink `
+  --ink_threshold 245 `
+  --ink_dilate 1 `
+  --min_component_area 16
 ```
 
 Prepare the next Clova font for editing:
